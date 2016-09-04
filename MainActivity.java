@@ -54,12 +54,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void populateClasses() {
 
-//        Retrofit retrofit = new Retrofit.Builder()
-//                .baseUrl(BASE_URL)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//
-//        UWApiInterface service = retrofit.create(UWApiInterface.class);
 
         ///////////// testing
         UWClass testClass = new UWClass();
@@ -74,26 +68,11 @@ public class MainActivity extends AppCompatActivity {
 
         /////////////////////
 
-//        Call<UWClassWrapper> call = service.getClass("1139", "CS", "370", API_KEY); //todo replace subjects with db stuff
-//        call.enqueue(new Callback<UWClassWrapper>() {
-//
-//            @Override
-//            public void onResponse(Call<UWClassWrapper> call, Response<UWClassWrapper> response) {
-//                UWClassWrapper uwClassWrapper = response.body();
-//                List<UWClass> list = uwClassWrapper.getUwClasses();
-//
-//                // can you specify sections? research // todo: check if you can specify section in api
-//                for (UWClass uwclass : list) {
-//                    if (uwclass.getSection().equals("LEC 001")) { //todo: replace section with db section
-//                        mAdapter.addToList(uwclass);
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<UWClassWrapper> call, Throwable t) {
-//
-//            }
-//        });
+        
+        List<UWClass> classList = ClassApplication.db.getAllClasses();
+
+        for (UWClass uwClass : classList) {
+            mAdapter.addToList(uwClass);
+        }
     }
 }

@@ -110,7 +110,7 @@ public class FavouritedClassesDb extends SQLiteOpenHelper {
 
             uwClass.setSubject(cursor.getString(COLUMN_SUBJECT));
             uwClass.setNumber(cursor.getString(COLUMN_NUMBER));
-            //todo
+            //todo: rest of the uwclass fields
 //            uwClass = new UWClass(cursor.getString(COLUMN_SUBJECT), cursor.getString(COLUMN_NUMBER), cursor.getInt(COLUMN_TOTAL_CAPACITY),
 //                    cursor.getInt(COLUMN_TOTAL_ENROLLED),
 //                    cursor.getString(COLUMN_TIME), cursor.getString(COLUMN_TERM), cursor.getString(COLUMN_LOCATION), cursor.getString(COLUMN_NAME), cursor.getString(COLUMN_SECTION));
@@ -121,28 +121,32 @@ public class FavouritedClassesDb extends SQLiteOpenHelper {
         return uwClass;
     }
 
-//    public List<UWClass> getAllClasses() {
-//        List<UWClass> classList = new ArrayList<>();
-//        // Select All Query
-//        String selectQuery = "SELECT  * FROM " + TABLE_CLASSES;
-//
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        Cursor cursor = db.rawQuery(selectQuery, null);
-//
-//        // looping through all rows and adding to list
-//        if (cursor.moveToFirst()) {
-//            do {
-//                UWClass uwClass = new UWClass(cursor.getString(COLUMN_SUBJECT), cursor.getString(COLUMN_NUMBER), cursor.getInt(COLUMN_TOTAL_CAPACITY),
+    public List<UWClass> getAllClasses() {
+        List<UWClass> classList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_CLASSES;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                UWClass uwClass = new UWClass();
+                uwClass.setSubject(cursor.getString(COLUMN_SUBJECT));
+                uwClass.setNumber(cursor.getString(COLUMN_NUMBER));
+                //todo: the rest of the uwclass fields
+//                cursor.getString(COLUMN_SUBJECT), cursor.getString(COLUMN_NUMBER), cursor.getInt(COLUMN_TOTAL_CAPACITY),
 //                        cursor.getInt(COLUMN_TOTAL_ENROLLED),
 //                        cursor.getString(COLUMN_TIME), cursor.getString(COLUMN_TERM), cursor.getString(COLUMN_LOCATION), cursor.getString(COLUMN_NAME), cursor.getString(COLUMN_SECTION));
-//                classList.add(uwClass);
-//            } while (cursor.moveToNext());
-//        }
-//        cursor.close();
-//
-//        // return contact list
-//        return classList;
-//    }
+                classList.add(uwClass);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+
+        // return contact list
+        return classList;
+    }
 
     public int updateClassCapacity(UWClass uwClass) {
         SQLiteDatabase db = this.getWritableDatabase();
