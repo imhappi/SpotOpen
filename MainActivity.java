@@ -1,31 +1,27 @@
 package naomi.me.spotopen;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import naomi.me.spotopen.Api.UWApiInterface;
 import naomi.me.spotopen.Model.UWClass;
-import naomi.me.spotopen.Model.UWClassWrapper;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
-//    public static final String BASE_URL = "https://api.uwaterloo.ca/v2/"; //todo
-//    private static String API_KEY = "c17f04337a20f48f2644be97c63cba74"; //todo
-
     @BindView(R.id.favourited_classes_recycler_view)
     RecyclerView mFavouritedClassesRecyclerView;
+
+    @BindView(R.id.add_more_button)
+    ImageView mAddMoreButton;
 
     private RecyclerView.LayoutManager mLayoutManager;
     private ClassesAdapter mAdapter;
@@ -34,25 +30,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        ButterKnife.bind(this);
-
-        mLayoutManager = new LinearLayoutManager(this);
-        mFavouritedClassesRecyclerView.setLayoutManager(mLayoutManager);
-
-        mAdapter = new ClassesAdapter();
-        mFavouritedClassesRecyclerView.setAdapter(mAdapter);
-
-        populateClasses();
-
-
-//        TODO: implement firebase and check for empty slots and send pushes server-side
-//        Firebase.setAndroidContext(getApplicationContext());
-//
-//        startService(new Intent(this, FirebasePushService.class));
-    }
-
-    private void populateClasses() {
 
 
         ///////////// testing
@@ -68,7 +45,36 @@ public class MainActivity extends AppCompatActivity {
 
         /////////////////////
 
-        
+        ButterKnife.bind(this);
+
+        mLayoutManager = new LinearLayoutManager(this);
+        mFavouritedClassesRecyclerView.setLayoutManager(mLayoutManager);
+
+        mAdapter = new ClassesAdapter();
+        mFavouritedClassesRecyclerView.setAdapter(mAdapter);
+
+        populateClasses();
+
+        mAddMoreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("Naomi", "onClick - add more button");
+                Intent intent = new Intent(v.getContext(), ChooseClassActivity.class);
+
+                v.getContext().startActivity(intent);
+            }
+        });
+
+
+//        TODO: implement firebase and check for empty slots and send pushes server-side
+//        Firebase.setAndroidContext(getApplicationContext());
+//
+//        startService(new Intent(this, FirebasePushService.class));
+    }
+
+    private void populateClasses() {
+
+
         List<UWClass> classList = ClassApplication.db.getAllClasses();
 
         for (UWClass uwClass : classList) {
