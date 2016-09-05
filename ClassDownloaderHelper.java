@@ -14,6 +14,8 @@ import java.util.List;
 import naomi.me.spotopen.Api.UWApiInterface;
 import naomi.me.spotopen.Model.UWClass;
 import naomi.me.spotopen.Model.UWClassWrapper;
+import naomi.me.spotopen.Model.UWTermData;
+import naomi.me.spotopen.Model.UWTermWrapper;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -105,26 +107,19 @@ public class ClassDownloaderHelper {
 
         UWApiInterface service = retrofit.create(UWApiInterface.class);
 
-        Call<JSONArray> call = service.getTerms(API_KEY);
-        call.enqueue(new Callback<JSONArray>() {
+        Call<UWTermWrapper> call = service.getTerms(API_KEY);
+        call.enqueue(new Callback<UWTermWrapper>() {
             @Override
-            public void onResponse(Call<JSONArray> call, Response<JSONArray> response) {
-                try {
-                    JSONArray data = response.body().getJSONArray(1);
-                    String previousTerm = data.getString(0); // todo: fix later, will break if order changes
-                    String currentTerm = data.getString(1);
-                    String nextTerm = data.getString(2);
-
-                    terms.add(previousTerm);
-                    terms.add(currentTerm);
-                    terms.add(nextTerm);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            public void onResponse(Call<UWTermWrapper> call, Response<UWTermWrapper> response) {
+                UWTermWrapper wrapper = response.body();
+                UWTermData data = wrapper.getTermData();
+                terms.add(Integer.toString(data.getPreviousTerm()));
+                terms.add(Integer.toString(data.getCurrentTerm()));
+                terms.add(Integer.toString(data.getNextTerm()));
             }
 
             @Override
-            public void onFailure(Call<JSONArray> call, Throwable t) {
+            public void onFailure(Call<UWTermWrapper> call, Throwable t) {
 
             }
         });

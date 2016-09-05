@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import naomi.me.spotopen.Model.UWClass;
 import naomi.me.spotopen.Model.UWClassWrapper;
+import naomi.me.spotopen.Model.UWTermWrapper;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -24,7 +25,7 @@ public interface UWApiInterface {
 //    Call<UWClassWrapper> getUWClass();
 
     @GET("terms/list.json")
-    Call<JSONArray> getTerms(@Query("key") String apiKey);
+    Call<UWTermWrapper> getTerms(@Query("key") String apiKey);
 
     @GET("terms/{term}/courses.json")
     Call<JSONObject> getCourses(@Query("key") String apiKey);

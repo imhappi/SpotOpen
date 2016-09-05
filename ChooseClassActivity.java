@@ -38,14 +38,19 @@ public class ChooseClassActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        ArrayAdapter<String> termsSpinnerAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, ClassDownloaderHelper.getListOfTerms());
+        setupTermSpinner();
+    }
+
+    private void setupTermSpinner() {
+        final ArrayAdapter<String> termsSpinnerAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, ClassDownloaderHelper.getListOfTerms());
 
         mTermSpinner.setAdapter(termsSpinnerAdapter);
+        mTermSpinner.setSelection(-1);
 
         mTermSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                setupSubjectSpinner(termsSpinnerAdapter.getItem(position)));
             }
 
             @Override
@@ -53,6 +58,15 @@ public class ChooseClassActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void setupSubjectSpinner(String term) {
+
+
+    }
+
+    private void setupNumberSpinner() {
+
     }
 
 }
