@@ -1,13 +1,5 @@
 package naomi.me.spotopen;
 
-import android.util.Log;
-
-import com.squareup.okhttp.ResponseBody;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +52,7 @@ public class ClassDownloaderHelper {
         });
     }
 
-    public static List<UWClass> downloadClassesAndReturnClassList(String term, String subject, String number, final String section) {
+    public static UWClass downloadClassesAndReturnClass(String term, String subject, String number, final String section) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -92,11 +84,10 @@ public class ClassDownloaderHelper {
             }
         });
 
-        return classList; // kind of worried about this since local variable;
-        // the value of classList will change because of async network call, but will stack be overwritten by the time it's used? not sure how android works
+        return classList.get(0); // hacky; how do I assign something in the onResponse since the type is void and it's an inner class?
     }
 
-    public static List<String> getListOfTerms() {
+    public static List<String> getListOfTerms(final AdapterCallback callback) {
 
         final List<String> terms = new ArrayList<>();
 
@@ -116,6 +107,7 @@ public class ClassDownloaderHelper {
                 terms.add(Integer.toString(data.getPreviousTerm()));
                 terms.add(Integer.toString(data.getCurrentTerm()));
                 terms.add(Integer.toString(data.getNextTerm()));
+                callback.notifyDatasetChanged();
             }
 
             @Override
@@ -124,8 +116,37 @@ public class ClassDownloaderHelper {
             }
         });
 
-        Log.d("Naomi", "terms is: " + terms.size());
-
         return terms;
+    }
+
+    public static void getListOfClasses(final String term, final AdapterCallback callback) {
+
+        final List<UWClass> courses = new ArrayList<>();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        UWApiInterface service = retrofit.create(UWApiInterface.class);
+
+        Call<UWClassWrapper> call = service.getCourses(term, API_KEY);
+        call.enqueue(new Callback<UWClassWrapper>() {
+            @Override
+            public void onResponse(Call<UWClassWrapper> call, Response<UWClassWrapper> response) {
+                if (response != null && response.body() != null) {
+                    List<UWClass> classList = response.body().getUwClasses();
+                    for (UWClass uwClass : classList) {
+                        courses.add(uwClass);
+                    }
+                }
+                callback.setupSubjectSpinner(courses, term);
+            }
+
+            @Override
+            public void onFailure(Call<UWClassWrapper> call, Throwable t) {
+
+            }
+        });
     }
 }

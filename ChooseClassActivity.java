@@ -10,14 +10,19 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import naomi.me.spotopen.Model.UWClass;
 
 /**
  * Created by naomikoo on 2016-09-04.
  */
-public class ChooseClassActivity extends AppCompatActivity {
+public class ChooseClassActivity extends AppCompatActivity implements AdapterCallback {
 
     @BindView(R.id.term_spinner)
     Spinner mTermSpinner;
@@ -27,6 +32,8 @@ public class ChooseClassActivity extends AppCompatActivity {
 
     @BindView(R.id.number_spinner)
     Spinner mNumberSpinner;
+    private ArrayAdapter<String> mTermsSpinnerAdapter;
+    private ArrayAdapter<String> mSubjectSpinnerAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,15 +49,13 @@ public class ChooseClassActivity extends AppCompatActivity {
     }
 
     private void setupTermSpinner() {
-        final ArrayAdapter<String> termsSpinnerAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, ClassDownloaderHelper.getListOfTerms());
+        mTermsSpinnerAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, ClassDownloaderHelper.getListOfTerms(this));
 
-        mTermSpinner.setAdapter(termsSpinnerAdapter);
-        mTermSpinner.setSelection(-1);
-
+        mTermSpinner.setAdapter(mTermsSpinnerAdapter);
         mTermSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                setupSubjectSpinner(termsSpinnerAdapter.getItem(position)));
+                startCoursesDownload(mTermsSpinnerAdapter.getItem(position));
             }
 
             @Override
@@ -60,13 +65,77 @@ public class ChooseClassActivity extends AppCompatActivity {
         });
     }
 
-    private void setupSubjectSpinner(String term) {
+    private void startCoursesDownload(final String term) {
+        ClassDownloaderHelper.getListOfClasses(term, this);
+    }
 
+    @Override
+    public void notifyDatasetChanged() {
+        if (mTermsSpinnerAdapter != null) {
+            mTermsSpinnerAdapter.notifyDataSetChanged();
+        }
+
+        if (mSubjectSpinnerAdapter != null) {
+            mSubjectSpinnerAdapter.notifyDataSetChanged();
+        }
 
     }
 
-    private void setupNumberSpinner() {
+    @Override
+    public void setupSubjectSpinner(final List<UWClass> classes, final String term) {
+
+        Map<String, Void> subjectsMap = new LinkedHashMap<>();
+
+        for (UWClass uwClass : classes) {
+            subjectsMap.put(uwClass.getSubject(), null);
+        }
+
+        final List<String> subjects = new ArrayList<>(subjectsMap.keySet());
+
+        mSubjectSpinnerAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, subjects);
+        mSubjectSpinner.setAdapter(mSubjectSpinnerAdapter);
+        mSubjectSpinner.setEnabled(true);
+
+        mSubjectSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                final String subject = subjects.get(position);
+
+                final List<String> numbers = new ArrayList<>();
+
+                for (UWClass uwClass : classes) {
+                    if (uwClass.getSubject().equals(subject)) {
+                        numbers.add(uwClass.getNumber());
+                    }
+                }
+                ArrayAdapter<String> numberSpinnerAdapter = new ArrayAdapter<>(view.getContext(), R.layout.support_simple_spinner_dropdown_item, numbers);
+                mNumberSpinner.setEnabled(true);
+                mNumberSpinner.setAdapter(numberSpinnerAdapter);
+
+                mNumberSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        // we know the term, subject, and the number. we can look for this class in the classes list and pass that to the activity
+                        for (UWClass uwClass : classes) {
+                            if (uwClass.getSubject().equals(subject) && uwClass.getNumber().equals(numbers.get(position))) {
+                                // go to activity
+                                Log.d("Naomi", "go to activity (or add another spinner for section)");
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
     }
-
 }

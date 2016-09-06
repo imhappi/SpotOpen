@@ -2,7 +2,6 @@ package naomi.me.spotopen;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
@@ -37,6 +36,10 @@ public class ClassDescriptionActivity extends AppCompatActivity {
                 String section = extras.getString(SECTION);
 
                 mUwClass = ClassApplication.db.getClass(subject, number, term, section);
+
+                if (mUwClass != null) {
+                    mUwClass = ClassDownloaderHelper.downloadClassesAndReturnClass(term, subject, number, section);
+                }
             }
         }
 
