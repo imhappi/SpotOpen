@@ -2,10 +2,12 @@ package naomi.me.spotopen.Model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by naomikoo on 2016-08-09.
  */
-public class UWClass {
+public class UWClass implements Serializable {
 
     @SerializedName("subject")
     private String subject;

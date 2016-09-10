@@ -64,7 +64,8 @@ public class FavouritedClassesDb extends SQLiteOpenHelper {
                 + KEY_TERM + " TEXT,"
                 + KEY_LOCATION + " TEXT,"
                 + KEY_NAME + " TEXT, "
-                + KEY_SECTION + " TEXT"
+                + KEY_SECTION + " TEXT "//, "
+//                + "PRIMARY KEY ( " + KEY_SUBJECT + ", " + KEY_NUMBER + ", " + KEY_TERM + ", " + KEY_SECTION + " ) "
                 + ")";
         db.execSQL(CREATE_CLASSES_TABLE);
     }
@@ -94,6 +95,7 @@ public class FavouritedClassesDb extends SQLiteOpenHelper {
 
         // Inserting Row
         db.insert(TABLE_CLASSES, null, values);
+//        db.insertWithOnConflict(TABLE_CLASSES, null, values, SQLiteDatabase.CONFLICT_REPLACE); // primary keys are subject number term
         db.close(); // Closing database connection
     }
 
@@ -104,12 +106,18 @@ public class FavouritedClassesDb extends SQLiteOpenHelper {
                         KEY_NUMBER, KEY_TOTAL_CAPACITY, KEY_TOTAL_ENROLLED, KEY_TIME, KEY_TERM, KEY_LOCATION, KEY_NAME, KEY_SECTION },
                 KEY_SUBJECT + "=?" + " AND " + KEY_NUMBER + "=?" + " AND " + KEY_TERM + "=?" + " AND " + KEY_SECTION + "=?",
                 new String[] { subject, number, term, section }, null, null, null, null);
-        UWClass uwClass = new UWClass();
-        if (cursor != null) {
+        UWClass uwClass = null;
+        if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
 
+            uwClass = new UWClass();
             uwClass.setSubject(cursor.getString(COLUMN_SUBJECT));
             uwClass.setNumber(cursor.getString(COLUMN_NUMBER));
+            uwClass.setTerm(cursor.getString(COLUMN_TERM));
+            uwClass.setTotalEnrolled(cursor.getInt(COLUMN_TOTAL_ENROLLED));
+            uwClass.setTotalCapacity(cursor.getInt(COLUMN_TOTAL_CAPACITY));
+            uwClass.setSection(cursor.getString(COLUMN_SECTION));
+            uwClass.setName(cursor.getString(COLUMN_NAME));
             //todo: rest of the uwclass fields
 //            uwClass = new UWClass(cursor.getString(COLUMN_SUBJECT), cursor.getString(COLUMN_NUMBER), cursor.getInt(COLUMN_TOTAL_CAPACITY),
 //                    cursor.getInt(COLUMN_TOTAL_ENROLLED),
@@ -130,11 +138,16 @@ public class FavouritedClassesDb extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
+        if (cursor.moveToFirst() && cursor.getCount() > 0) {
             do {
                 UWClass uwClass = new UWClass();
                 uwClass.setSubject(cursor.getString(COLUMN_SUBJECT));
                 uwClass.setNumber(cursor.getString(COLUMN_NUMBER));
+                uwClass.setTerm(cursor.getString(COLUMN_TERM));
+                uwClass.setTotalEnrolled(cursor.getInt(COLUMN_TOTAL_ENROLLED));
+                uwClass.setTotalCapacity(cursor.getInt(COLUMN_TOTAL_CAPACITY));
+                uwClass.setSection(cursor.getString(COLUMN_SECTION));
+                uwClass.setName(cursor.getString(COLUMN_NAME));
                 //todo: the rest of the uwclass fields
 //                cursor.getString(COLUMN_SUBJECT), cursor.getString(COLUMN_NUMBER), cursor.getInt(COLUMN_TOTAL_CAPACITY),
 //                        cursor.getInt(COLUMN_TOTAL_ENROLLED),
@@ -162,7 +175,7 @@ public class FavouritedClassesDb extends SQLiteOpenHelper {
 
     public void deleteClass(UWClass uwClass) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_CLASSES, KEY_SUBJECT + "=?" + " AND " + KEY_NUMBER + "=?" + " AND " + KEY_TERM + "=?" + KEY_SECTION + "=?",
+        db.delete(TABLE_CLASSES, KEY_SUBJECT + "=?" + " AND " + KEY_NUMBER + "=?" + " AND " + KEY_TERM + "=?" + " AND " + KEY_SECTION + "=? ",
                 new String[] { uwClass.getSubject() , uwClass.getNumber(), uwClass.getTerm(), uwClass.getSection() });
         db.close();
     }

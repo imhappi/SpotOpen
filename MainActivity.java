@@ -33,15 +33,15 @@ public class MainActivity extends AppCompatActivity {
 
 
         ///////////// testing
-        UWClass testClass = new UWClass();
-        testClass.setSubject("CS");
-        testClass.setNumber("370");
-        testClass.setTerm("1139");
-        testClass.setSection("LEC 001");
-        testClass.setTotalCapacity(77);
-        testClass.setTotalEnrolled(78);
-
-        ClassApplication.db.addClass(testClass);
+//        UWClass testClass = new UWClass();
+//        testClass.setSubject("CS");
+//        testClass.setNumber("370");
+//        testClass.setTerm("1139");
+//        testClass.setSection("LEC 001");
+//        testClass.setTotalCapacity(77);
+//        testClass.setTotalEnrolled(78);
+//
+//        ClassApplication.db.addClass(testClass);
 
         /////////////////////
 
@@ -74,11 +74,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void populateClasses() {
 
-
         List<UWClass> classList = ClassApplication.db.getAllClasses();
 
         for (UWClass uwClass : classList) {
             mAdapter.addToList(uwClass);
         }
     }
+
 }

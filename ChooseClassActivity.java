@@ -1,5 +1,6 @@
 package naomi.me.spotopen;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -7,8 +8,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -32,6 +35,10 @@ public class ChooseClassActivity extends AppCompatActivity implements AdapterCal
 
     @BindView(R.id.number_spinner)
     Spinner mNumberSpinner;
+
+    @BindView(R.id.ok_button)
+    Button mButton;
+
     private ArrayAdapter<String> mTermsSpinnerAdapter;
     private ArrayAdapter<String> mSubjectSpinnerAdapter;
 
@@ -44,6 +51,8 @@ public class ChooseClassActivity extends AppCompatActivity implements AdapterCal
         setContentView(R.layout.activity_choose_class);
 
         ButterKnife.bind(this);
+
+        mButton.setEnabled(false);
 
         setupTermSpinner();
     }
@@ -114,12 +123,24 @@ public class ChooseClassActivity extends AppCompatActivity implements AdapterCal
 
                 mNumberSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
+
+                        mButton.setEnabled(true);
+
                         // we know the term, subject, and the number. we can look for this class in the classes list and pass that to the activity
                         for (UWClass uwClass : classes) {
                             if (uwClass.getSubject().equals(subject) && uwClass.getNumber().equals(numbers.get(position))) {
                                 // go to activity
-                                Log.d("Naomi", "go to activity (or add another spinner for section)");
+                                mButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intent = new Intent(v.getContext(), PickClassSectionActivity.class);
+                                        intent.putExtra(ClassDescriptionActivity.SUBJECT, subject);
+                                        intent.putExtra(ClassDescriptionActivity.NUMBER, numbers.get(position));
+                                        intent.putExtra(ClassDescriptionActivity.TERM, term);
+                                        startActivity(intent);
+                                    }
+                                });
                             }
                         }
                     }

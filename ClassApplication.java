@@ -2,6 +2,7 @@ package naomi.me.spotopen;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.facebook.stetho.Stetho;
@@ -37,5 +38,8 @@ public class ClassApplication extends Application {
         Stetho.initialize(initializer);
 
         db = new FavouritedClassesDb(getApplicationContext(), "SpotOpen", null, 1);
+
+        Intent intent = new Intent(this, RefreshService.class);
+        startService(intent);
     }
 }

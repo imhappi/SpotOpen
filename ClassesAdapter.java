@@ -21,6 +21,11 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassViewHolder> {
         classList = new ArrayList<>();
     }
 
+    public ClassesAdapter(List<UWClass> classes) {
+        classList = classes;
+        notifyDataSetChanged();
+    }
+
     @Override
     public ClassViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
@@ -36,6 +41,7 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassViewHolder> {
         holder.setEnrollmentResultsView(uwClass.getTotalEnrolled() + "/" + uwClass.getTotalCapacity());
         holder.setTermView(uwClass.getTerm());
         holder.setNameView(uwClass.getName());
+        holder.setSectionView(uwClass.getSection());
     }
 
     @Override

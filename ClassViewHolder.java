@@ -25,11 +25,16 @@ public class ClassViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.course_name)
     TextView nameView;
+
+    @BindView(R.id.section)
+    TextView sectionView;
+
     private String mCourseNumber;
     private String mEnrollmentResults;
     private String mName;
     private String mTerm;
     private String mCourseSubject;
+    private String mSection;
 
     public ClassViewHolder(View view) {
         super(view);
@@ -46,6 +51,7 @@ public class ClassViewHolder extends RecyclerView.ViewHolder {
                 intent.putExtra(ClassDescriptionActivity.SUBJECT, mCourseSubject);
                 intent.putExtra(ClassDescriptionActivity.NUMBER, mCourseNumber);
                 intent.putExtra(ClassDescriptionActivity.TERM, mTerm);
+                intent.putExtra(ClassDescriptionActivity.SECTION, mSection);
                 // TODO should include section number
 
                 v.getContext().startActivity(intent);
@@ -59,6 +65,11 @@ public class ClassViewHolder extends RecyclerView.ViewHolder {
         mCourseSubject = courseSubject;
         mCourseNumber = courseNumber;
         subjectNumberView.setText(courseSubject + courseNumber);
+    }
+
+    public void setSectionView(String section) {
+        mSection = section;
+        sectionView.setText(section);
     }
 
     public void setEnrollmentResultsView(String results) {
