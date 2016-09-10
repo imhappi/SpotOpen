@@ -53,4 +53,8 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassViewHolder> {
         classList.add(uwClass);
         notifyDataSetChanged();
     }
+
+    public void clear() {
+        classList.clear();
+    }
 }

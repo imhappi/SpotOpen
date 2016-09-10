@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.app.NotificationCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,12 +56,14 @@ public class ClassDownloaderHelper {
                             Intent notificationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://quest.uwaterloo.ca"));
                             PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 
-                            Notification n  = new Notification.Builder(context)
+                            Notification n  = new NotificationCompat.Builder(context)
                                     .setContentTitle("Spot open in " + uwclass.getSubject() + uwclass.getNumber())
                                     .setContentText(uwclass.getSection())
                                     .setContentIntent(contentIntent)
                                     .setPriority(Notification.PRIORITY_HIGH)
+                                    .setSmallIcon(R.drawable.pluscircle)
                                     .setAutoCancel(true).build();
+
 
                             notificationManager.notify(289, n);
                         }
